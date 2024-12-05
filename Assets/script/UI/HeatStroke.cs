@@ -69,7 +69,6 @@ public class HeatStroke : MonoBehaviour
     void GameOver()
     {
         EventHandler.CallGetGameOverEvent();
-       // playerInput.enabled = false;
     }
     
 }

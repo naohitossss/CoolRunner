@@ -250,7 +250,7 @@ public class LaneMovement : MonoBehaviour
                 smashSound.Play();
                 anim.SetTrigger("Hit");
                 hitSound.Play();
-                knockbackDirection = (transform.position - hit.transform.position).normalized;
+                knockbackDirection = -transform.forward;
                 knockbackDirection.y = 0;
                 heatStroke.currentStroke += 10f;  // 熱中症値の増加
                 state = CharacterState.Knockback;

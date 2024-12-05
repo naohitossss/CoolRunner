@@ -8,7 +8,8 @@ public static class EventHandler
     public static event Action GetPointEvent;
     public static event Action GetGameOverEvent;
     public static event Action GetGameClearEvent;
-    
+    public static event Action GetGameStopEvent;
+
     // 新しく追加する距離更新イベント
     public static event Action<float> UpdateDistanceEvent;
 
@@ -21,6 +22,10 @@ public static class EventHandler
     public static void CallGetGameOverEvent()
     {
         GetGameOverEvent?.Invoke();
+    }
+    public static void CallGetGameStopEvent()
+    {
+        GetGameStopEvent?.Invoke();
     }
 
     public static void CallGetGameClearEvent()
