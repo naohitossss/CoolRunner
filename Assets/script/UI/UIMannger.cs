@@ -125,10 +125,13 @@ public class UIManager : MonoBehaviour
     // ゲームを続行する
     public void ContineGame() 
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-        Time.timeScale = 1;
-        gameOverPanel.SetActive(false);
+        if (gameClearPanel != null)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            Time.timeScale = 1;
+            gameStopPanel.SetActive(false);
+        }
     }
 
     private void OnGetPointEvent()

@@ -1,21 +1,27 @@
 ﻿using UnityEngine;
 
+// カメラの動きを制御するクラス
 [RequireComponent(typeof(Camera))]
 public class CameraPos : MonoBehaviour
 {
-    [Header("要跟随的人物")]
+    // 追跡対象のプレイヤー
+    [Header("追跡対象")]
     public Transform target = null;
 
-    [Header("鼠标滑动速度")]
+    // カメラの各種設定
+    [Header("マウス感度")]
     [Range(0, 1)]
     public float linearSpeed = 1;
-    [Header("摄像机与玩家距离")]
+
+    [Header("カメラとプレイヤーの距離")]
     [Range(15, 20)]
     public float distanceFromTarget = 5;
-    [Header("摄像机速度")]
+
+    [Header("カメラの移動速度")]
     [Range(1, 50)]
     public float speed = 5;
-    [Header("x轴偏向量")]
+
+    [Header("X軸オフセット")]
     public float xOffset = 0.5f;
 
     [Header("カメラの固定角度")]
@@ -24,7 +30,7 @@ public class CameraPos : MonoBehaviour
     private float yMouse;
     private float xMouse;
 
-    // Start is called before the first frame update
+    // 初期設定
     void Start()
     {
         if (target != null)
@@ -35,21 +41,24 @@ public class CameraPos : MonoBehaviour
         }
     }
 
+    // カメラの位置更新
     private void LateUpdate()
     {
         if (target != null)
         {
             Quaternion targetRotation = Quaternion.Euler(fixedRotation);
             
-            // CamCheckを使用せず、直接距離を計算
+            // カメラの目標位置を計算
             Vector3 targetPosition = target.position + targetRotation * new Vector3(xOffset, 0, -distanceFromTarget) + target.GetComponent<CharacterController>().center * 1.75f;
 
+            // カメラの位置と回転を滑らかに更新
             transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * speed);
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 25f);
         }
     }
 
-    public void CursorArise()//cursor可视不可视
+    // カーソルの表示/非表示を切り替え
+    public void CursorArise()
     {
         if (Input.GetKeyUp(KeyCode.Escape) && Cursor.visible == false)
         {
@@ -58,11 +67,10 @@ public class CameraPos : MonoBehaviour
         }
     }
 
+    // カメラを指定位置に瞬間移動
     public void Teleport(Vector3 position, Quaternion rotation)
     {
         transform.position = position;
         transform.rotation = rotation;
-
-        
     }
 }
