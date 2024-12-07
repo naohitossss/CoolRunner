@@ -3,20 +3,20 @@ using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour
 {
-    public static AudioManager Instance; // ƒVƒ“ƒOƒ‹ƒgƒ“ƒCƒ“ƒXƒ^ƒ“ƒX
+    public static AudioManager Instance; // ï¿½Vï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½gï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½X
     private float audioVolume;
 
     void Awake()
     {
-        // ƒVƒ“ƒOƒ‹ƒgƒ“‚Ìİ’è
+        // ï¿½Vï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½gï¿½ï¿½ï¿½Ìİ’ï¿½
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject); // ƒV[ƒ“‚ğØ‚è‘Ö‚¦‚Ä‚à”jŠü‚³‚ê‚È‚¢
+            DontDestroyOnLoad(gameObject); // ï¿½Vï¿½[ï¿½ï¿½ï¿½ï¿½Ø‚ï¿½Ö‚ï¿½ï¿½Ä‚ï¿½ï¿½jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½
         }
         else
         {
-            Destroy(gameObject); // •¡”‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ª¶¬‚³‚ê‚È‚¢‚æ‚¤‚É‚·‚é
+            Destroy(gameObject); // ï¿½ï¿½ï¿½ï¿½ï¿½ÌƒCï¿½ï¿½ï¿½Xï¿½^ï¿½ï¿½ï¿½Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½æ‚¤ï¿½É‚ï¿½ï¿½ï¿½
         }
     }
 
@@ -25,8 +25,8 @@ public class AudioManager : MonoBehaviour
         return audioVolume;
     }
 
-    // ‰¹—Ê‚ğ•ÏX‚·‚éƒƒ\ƒbƒh
-    void ChangeVolume(float volume)
+    // ï¿½ï¿½ï¿½Ê‚ï¿½ÏXï¿½ï¿½ï¿½éƒï¿½\ï¿½bï¿½h
+    public void ChangeVolume(float volume)
     {
         audioVolume = volume;
     }
