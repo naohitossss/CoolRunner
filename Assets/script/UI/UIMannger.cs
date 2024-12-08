@@ -27,7 +27,6 @@ public class UIManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             EventHandler.CallGetGameStopEvent();
-            Debug.Log("fuck");
         }
     }
 
@@ -125,7 +124,7 @@ public class UIManager : MonoBehaviour
     // ゲームを続行する
     public void ContineGame() 
     {
-        if (gameClearPanel != null)
+        if (gameStopPanel != null)
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
