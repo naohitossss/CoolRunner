@@ -76,17 +76,12 @@ public class UIManager : MonoBehaviour
     {
         // ゲームオーバーパネルを表示
         gameOverPanel.SetActive(true);
-        Debug.Log("currentDistance: " + currentDistance);
-        LeaderboardManager.Instance.AddScore("LocalPlayer", (int)currentDistance);
-        // ゲームオーバーパネルが表示された時の処理
-        if (gameOverPanel.activeInHierarchy)
-        {
             // マウスカーソルを表示して操作可能にする
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
             // ゲームを一時停止
             Time.timeScale = 0;
-        }
+            LeaderboardManager.Instance.SetCurrentDistance(currentDistance);
     }
 
     // ゲームクリア時のイベントハンドラー

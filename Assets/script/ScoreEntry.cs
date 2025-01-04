@@ -3,13 +3,13 @@ using System;
 [Serializable]
 public class ScoreEntry
 {
-    public string playerName;  // ƒvƒŒƒCƒ„[‚Ì–¼‘O
-    public int score;          // ƒvƒŒƒCƒ„[‚ÌƒXƒRƒA
+    public string playerName;  // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½Ì–ï¿½ï¿½O
+    public int distance;          // ï¿½vï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ÌƒXï¿½Rï¿½A
 
-    public ScoreEntry(string name, int score)
+    public ScoreEntry(string name, int distance)
     {
         playerName = name;
-        this.score = score;
+        this.distance = distance;
     }
 }
 

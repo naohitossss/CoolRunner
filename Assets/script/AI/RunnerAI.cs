@@ -1,53 +1,81 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class RunnerAI : MonoBehaviour
 {
-    public float npcSpeed = 25f;
-    private NavMeshAgent navAgent;
-    private Vector3 targetPosition;
-    private Vector3 startLanePosition;
+    [SerializeField]  private float npcSpeed = 25f;
+    [SerializeField] private Vector3 targetPosition;
+    [SerializeField] private Vector3 startLanePosition;
+    [SerializeField]  private float endLegth = 340f;
+
+    private Rigidbody rb;
+    private Animator anim;
+    private Vector3 moveDirection;
+    private AIObstacleAvoid obstacleAvoid;
 
     void Start()
     {
-        navAgent = GetComponent<NavMeshAgent>();
-        InitializeAI();
+        anim = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
+
+        // (1) 同じオブジェクトにアタッチされている障害物回避スクリプトを取得
+        obstacleAvoid = GetComponent<AIObstacleAvoid>();
+        //InitializeAI();
+
+        SetMoveDirection(targetPosition);
     }
     public void SetLanePosition(Vector3 position)
     {
         startLanePosition = position;
     }
-    private void InitializeAI()
+
+    public void SetMoveDirection(Vector3 direction)
     {
-        if (navAgent == null)
-        {
-            return;
-        }
-        
-        navAgent.speed = npcSpeed;
-        targetPosition = new Vector3(startLanePosition.x, startLanePosition.y, transform.position.z - 340f) ;
-        navAgent.SetDestination(targetPosition);
+        moveDirection = (direction - transform.position).normalized;
+    }
+
+    public Vector3 GetMoveDirection()
+    {
+        return moveDirection;
+    }
+    public void SetSpeed(float speed)
+    {
+        npcSpeed = speed;
     }
 
     void Update()
-    {        
-       
-            RotateTowardsMovementDirection();
-        
-    }
-
-    void RotateTowardsMovementDirection()
     {
-        if (navAgent.velocity.magnitude > 0.1f)
+        //もし障害物回避スクリプトがあるなら、回避ベクトルを取得
+        Vector3 avoidVec = Vector3.zero;
+        Vector3 finalMoveDirection = moveDirection;
+        if (obstacleAvoid != null && obstacleAvoid.obstacleList.Count > 0)
+        {
+            avoidVec = obstacleAvoid.GetAvoidVelocity(finalMoveDirection, npcSpeed);
+            //「本来の移動方向 moveDirection + 回避方向 avoidVec3D」
+            finalMoveDirection = (moveDirection + avoidVec).normalized;
+        }
+        else
+        {
+            SetMoveDirection(targetPosition);
+        }
+            rb.MovePosition(transform.position + finalMoveDirection * npcSpeed * Time.deltaTime);
+            RotateTowardsMovementDirection(finalMoveDirection);
+    }
+    void RotateTowardsMovementDirection(Vector3 MoveDirection)
+    {
+        if (npcSpeed > 0.1f)
         {
             // 移動方向を取得
-            Vector3 direction = navAgent.velocity.normalized;
-            // 上向きベクトルを基準に回転を計算
-            Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+            Quaternion targetRotation = Quaternion.LookRotation(MoveDirection, Vector3.up);
             // スムーズな回転を適用
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
         }
+    }
+    private void InitializeAI()
+    {
+        targetPosition = new Vector3(startLanePosition.x, startLanePosition.y, transform.position.z - endLegth) ;
     }
 
 }

@@ -31,9 +31,10 @@ public class LeaderboardDisplay : MonoBehaviour
         List<ScoreEntry> scores = LeaderboardManager.Instance.GetScores();
         foreach (ScoreEntry scoreEntry in scores)
         {
+            Debug.Log(scoreEntry.playerName + ": " + scoreEntry.distance);
             GameObject entry = Instantiate(scoreEntryPrefab, scoreListParent);
             entry.transform.Find("PlayerNameText").GetComponent<TextMeshProUGUI>().text = scoreEntry.playerName;
-            entry.transform.Find("ScoreText").GetComponent<TextMeshProUGUI>().text = scoreEntry.score.ToString() + "m";
+            entry.transform.Find("ScoreText").GetComponent<TextMeshProUGUI>().text = scoreEntry.distance.ToString() + "m";
         }
     }
 

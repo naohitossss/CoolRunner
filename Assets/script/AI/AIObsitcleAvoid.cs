@@ -4,116 +4,132 @@ using UnityEngine;
 
 public class AIObstacleAvoid : MonoBehaviour
 {
-    private List<GameObject> obstacleList = new List<GameObject>();
-    [SerializeField] private Vector2 speed;
-    private float m_dDboxWidth; // 検出ボックスの幅
-    private float m_dDboxLength; // 検出ボックスの長さ
+    // 障害物リスト
+    public List<GameObject> obstacleList { get; private set; }
+    private float dDboxWidth; // 検出ボックスの幅
+    private float dDboxLength; // 検出ボックスの長さ
+    
+    private Vector3 adjustedSpeed = Vector3.zero;
+    // 進行方向の判定
+    private readonly bool isMovingForward = true;
 
     void Start()
     {
+        // 障害物リストの初期化
+        obstacleList = new List<GameObject>();
         Collider collider = GetComponent<Collider>();
-        m_dDboxWidth = collider.bounds.size.x;
-        m_dDboxLength = collider.bounds.size.z;
+        // 検出ボックスの幅と長さを取得
+        dDboxWidth = collider.bounds.size.x;
+        dDboxLength = collider.bounds.size.z;
     }
 
-    public void SetSpeed(Vector2 speed)
-    {
-        this.speed = speed;
-    }
 
+    // 障害物に衝突したときの処理
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
+        GetColliderLegth getColliderLegth = other.GetComponent<GetColliderLegth>();
+        // 障害物の検出
+        if (getColliderLegth != null)
         {
-            obstacleList.Add(other.gameObject);
+            if (!obstacleList.Contains(other.gameObject)) // オブジェクトがリストにない場合追加
+            {
+                obstacleList.Add(other.gameObject);
+            }
         }
     }
 
+    // 障害物から離れたときの処理
     void OnTriggerExit(Collider other)
     {
-        obstacleList.Remove(other.gameObject);
+        // 障害物の検出解除
+        if (obstacleList.Contains(other.gameObject))
+        {
+            obstacleList.Remove(other.gameObject);
+        }
     }
 
-    public Vector2 GetAvoidSpeed()
+    // 回避速度を計算するメソッド
+    public Vector3 GetAvoidVelocity(Vector3 currentSpeed, float speed)
     {
+        Vector3 adjustedSpeed = currentSpeed;
         float closestIP = float.MaxValue;
         GameObject closestObstacle = null;
         Vector2 closestObstacleLocalPos = Vector2.zero;
-        Vector2 adjustedSpeed = speed;
-        float obstacleRadius = 0;
-
+        
         foreach (GameObject obstacle in obstacleList)
         {
-            Vector2 LocalPos = PointToLocalSpace(obstacle.transform.position.x, obstacle.transform.position.z);
+            if (obstacle == null) continue;
 
-            if (LocalPos.x >= 0)
+            // 障害物のローカル座標を取得
+            Vector3 localPos3D = transform.InverseTransformPoint(obstacle.transform.position);
+            Vector2 localPos2D = new Vector2(localPos3D.x, localPos3D.z);
+
+            // 前方にある障害物のみを対象とする
+            if (localPos2D.y > 0)
             {
-                Collider collider = obstacle.GetComponent<Collider>();
-                if (collider != null)
+                GetColliderLegth getColliderLegth = obstacle.GetComponent<GetColliderLegth>();
+                if (getColliderLegth != null)
                 {
-                    float ExpandedRadius = 0;
+                    float obstacleRadius = getColliderLegth.GetObstacleRadius();
+                    float expandedRadius = obstacleRadius + dDboxWidth / 2;
 
-                    if (collider is SphereCollider sphere)
+                    // 障害物が検出ボックス内にあるか確認
+                    if (Mathf.Abs(localPos2D.y) < expandedRadius)
                     {
-                        ExpandedRadius = sphere.radius + m_dDboxWidth / 2;
-                        obstacleRadius = sphere.radius;
-                    }
-                    else if (collider is BoxCollider box)
-                    {
-                        Vector3 boxSize = box.size * 0.5f;
-                        ExpandedRadius = Mathf.Max(boxSize.x, boxSize.z) + m_dDboxWidth / 2;
-                        obstacleRadius = Mathf.Max(box.size.x, box.size.z) / 2.0f;
-                    }
-                    else if (collider is CapsuleCollider capsule)
-                    {
-                        ExpandedRadius = capsule.radius + m_dDboxWidth / 2;
-                        obstacleRadius = capsule.radius;
-                    }
-                    else if (collider is MeshCollider mesh)
-                    {
-                        Bounds bounds = mesh.bounds;
-                        ExpandedRadius = Mathf.Max(bounds.extents.x, bounds.extents.z) + m_dDboxWidth / 2;
-                        obstacleRadius = Mathf.Max(bounds.extents.x, bounds.extents.z);
-                    }
-
-                    if (Mathf.Abs(LocalPos.y) < ExpandedRadius)
-                    {
-                        float SqrtPart = Mathf.Sqrt(ExpandedRadius * ExpandedRadius - LocalPos.y * LocalPos.y);
-                        float ip = LocalPos.x - SqrtPart;
-                        if (ip < 0)
-                        {
-                            ip = LocalPos.x + SqrtPart;
-                        }
-
+                        float sqrtPart = Mathf.Sqrt(expandedRadius * expandedRadius - localPos2D.y * localPos2D.y);
+                        float ip = localPos2D.x - sqrtPart;
+                        
                         if (ip < closestIP)
                         {
                             closestIP = ip;
                             closestObstacle = obstacle;
-                            closestObstacleLocalPos = LocalPos;
+                            closestObstacleLocalPos = localPos2D;
                         }
                     }
+                }
+                else
+                {
+                    Debug.Log("getColliderLegth is null");
                 }
             }
         }
 
         if (closestObstacle != null)
         {
-            float multiplier = 1.0f + (m_dDboxLength - closestObstacleLocalPos.x) / m_dDboxLength;
-            adjustedSpeed.y += (obstacleRadius - closestObstacleLocalPos.y) * multiplier;
+            // 回避速度の計算
+            float multiplier = speed + (dDboxLength - Mathf.Abs(closestObstacleLocalPos.y)) / dDboxLength;
+            float avoidDirection = -Mathf.Sign(closestObstacleLocalPos.x);
+            
+            // 後進時は回避方向を反転
+            if (currentSpeed.z <= 0)
+            {
+                avoidDirection *= -1;
+            }
+
+            adjustedSpeed.x += avoidDirection * multiplier;
         }
 
         return adjustedSpeed;
     }
 
-    private Vector2 PointToLocalSpace(float worldX, float worldZ)
+    // デバッグ用のGizmosを描画
+    void OnDrawGizmos()
     {
-        Vector3 localPoint = transform.InverseTransformPoint(new Vector3(worldX, 0, worldZ));
-        return new Vector2(localPoint.x, localPoint.z);
-    }
+        // 基本の検出範囲
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(transform.position, new Vector3(dDboxWidth, 0.1f, dDboxLength));
 
-    private Vector2 VectorToWorldSpace(Vector2 localVector, Vector3 forward, Vector3 side)
-    {
-        Vector3 worldVector = forward * localVector.x + side * localVector.y;
-        return new Vector2(worldVector.x, worldVector.z);
+        // 障害物への方向を表示
+        if (obstacleList != null)
+        {
+            foreach (var obstacle in obstacleList)
+            {
+                if (obstacle != null)
+                {
+                    Gizmos.color = Color.red;
+                    Gizmos.DrawLine(transform.position, obstacle.transform.position);
+                }
+            }
+        }
     }
 }
