@@ -11,12 +11,14 @@ public class PlayerNameInput : MonoBehaviour
     public TMP_InputField playernameInput;
     public TextMeshProUGUI errorTX;
     // Start is called before the first frame update
+
+
     void Start()
     {
-        
+        playernameInput.onValueChanged.AddListener(ValidateInput);
     }
 
-void ValidateInput(string input)
+    void ValidateInput(string input)
     {
         // 正規表現で無効な文字を除去
         string sanitizedInput = Regex.Replace(input, @"[^\w\u4E00-\u9FFF\u3040-\u30FF\uAC00-\uD7AF]", "");
@@ -28,18 +30,21 @@ void ValidateInput(string input)
         }
 
         // 修正した文字列を反映
-        playernameInput.text = sanitizedInput;
+        if (input != sanitizedInput)
+        {
+            playernameInput.text = sanitizedInput;
+        }
     }
 
-    public void OnNameChangeNameBottonPress()
-    {
-        if (playernameInput.text.Length < 1)
+        public void OnNameChangeNameBottonPress()
         {
-            LeaderboardManager.Instance.AddScore("NoNamePlayer");
+            if (playernameInput.text.Length < 1)
+            {
+                LeaderboardManager.Instance.AddScore("NoNamePlayer");
+            }
+            else
+            {
+                LeaderboardManager.Instance.AddScore(playernameInput.text);
+            }
         }
-        else
-        {
-            LeaderboardManager.Instance.AddScore(playernameInput.text);
-        }
-    }
 }

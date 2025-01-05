@@ -11,7 +11,6 @@ public class AIObstacleAvoid : MonoBehaviour
     
     private Vector3 adjustedSpeed = Vector3.zero;
     // 進行方向の判定
-    private readonly bool isMovingForward = true;
 
     void Start()
     {
