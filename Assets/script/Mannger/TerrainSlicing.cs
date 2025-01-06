@@ -14,12 +14,12 @@ public class TerrainSlicing : MonoBehaviour
     [Header("ランダム生成用地形プレハブ")]
     public List<GameObject> terrainObjects;  // ランダム生成用の地形プレハブリスト
     [Header("地形の削除距離")]
-    public float deletionDistance = 500f;  // プレイヤーからこの距離以上離れた地形を削除
+    public float deletionDistance = 350f;  // プレイヤーからこの距離以上離れた地形を削除
 
     private Vector2 terrainSizeValue;  // 地形サイズの実際の値を保持
-    private Dictionary<Vector2, GameObject> terrainLoadedFixed;  // 固定地形を管理する辞書
-    private Dictionary<(int x, int y), GameObject> terrainLoaded;  // 動的に生成された地形を管理する辞書
-    private Dictionary<(int x, int y), GameObject> dictTemp;  // 一時的な地形データを保持する辞書
+    private Dictionary<Vector2, GameObject> terrainLoadedFixed;  // 固定地形を管理するDictionary
+    private Dictionary<(int x, int y), GameObject> terrainLoaded;  // 動的に生成された地形を管理するDictionary
+    private Dictionary<(int x, int y), GameObject> dictTemp;  // 一時的な地形データを保持するDictionary
     private float lastTerrainYPosition;  // 最後に生成された地形のZ座標
     private List<GameObject> activeTerrains = new List<GameObject>();  // アクティブな地形を追跡
 
