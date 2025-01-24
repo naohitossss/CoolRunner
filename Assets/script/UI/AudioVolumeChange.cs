@@ -14,7 +14,9 @@ public class AudioVolumeChange : MonoBehaviour
         volumeSlider.minValue = 0.0f;
         volumeSlider.maxValue = 1.0f;
         volumeSlider.value = defaultVolume;
+        AudioManager.Instance.ChangeVolume(defaultVolume);
         volumeSlider.onValueChanged.AddListener(OnVolumeChanged);
+        
     }
 
     void OnVolumeChanged(float value)

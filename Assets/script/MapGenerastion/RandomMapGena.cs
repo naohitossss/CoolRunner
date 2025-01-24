@@ -36,7 +36,7 @@ public class RandomMapGena : MonoBehaviour
     void Start()
     {
         setStreatPos = Vector3.zero + new Vector3(0f, 0f, streatObjLegth / 2);
-        setGrassPos = Vector3.zero + new Vector3(0f,
+        //setGrassPos = Vector3.zero + new Vector3(0f,
 
     }
 

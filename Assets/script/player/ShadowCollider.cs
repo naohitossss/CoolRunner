@@ -6,15 +6,13 @@ public class ShadowCollider : MonoBehaviour
 {
     public Transform lightTarget;
     public bool ifShadow;
-    void Start()
-    {
-
-    }
+    // 影の状態を更新する
     void Update()
     {
         Vector3 target = (Quaternion.Euler(lightTarget.eulerAngles) * Vector3.forward).normalized * -1;
         Ray ray = new Ray(transform.position, target);
         RaycastHit hit;
+        // レイキャストで影の状態をチェック
         if (Physics.Raycast(ray, out hit, Mathf.Infinity))
         {
             //Debug.Log("碰撞对象" + hit.collider.name);
@@ -30,7 +28,6 @@ public class ShadowCollider : MonoBehaviour
     public IEnumerator SetIfShadowForDuration(float time)
     {
         ifShadow = true;
-        Debug.Log("drink");
         // 指定した秒数だけ待機
         yield return new WaitForSeconds(time);
 

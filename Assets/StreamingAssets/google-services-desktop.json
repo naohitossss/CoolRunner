@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "37115077733",
+    "project_id": "naohito-fa563",
+    "storage_bucket": "naohito-fa563.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:37115077733:android:259f9895fc0aff71ea128c",
+        "android_client_info": {
+          "package_name": "naohito.Coolrunner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrGpODj4vc2C9aYcIEqXk2lbav2-4IAAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -114,21 +114,12 @@ public class AIObstacleAvoid : MonoBehaviour
     // デバッグ用のGizmosを描画
     void OnDrawGizmos()
     {
-        // 基本の検出範囲
+        // 基本の検出範囲（Box）
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(transform.position, new Vector3(dDboxWidth, 0.1f, dDboxLength));
 
-        // 障害物への方向を表示
-        if (obstacleList != null)
-        {
-            foreach (var obstacle in obstacleList)
-            {
-                if (obstacle != null)
-                {
-                    Gizmos.color = Color.red;
-                    Gizmos.DrawLine(transform.position, obstacle.transform.position);
-                }
-            }
-        }
+
+
+        
     }
 }

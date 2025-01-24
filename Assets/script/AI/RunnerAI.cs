@@ -14,6 +14,7 @@ public class RunnerAI : MonoBehaviour
     private Animator anim;
     private Vector3 moveDirection;
     private AIObstacleAvoid obstacleAvoid;
+    private Vector3 finalMoveDirection;
 
     void Start()
     {
@@ -49,8 +50,8 @@ public class RunnerAI : MonoBehaviour
     {
         //もし障害物回避スクリプトがあるなら、回避ベクトルを取得
         Vector3 avoidVec = Vector3.zero;
-        Vector3 finalMoveDirection = moveDirection;
-        if (obstacleAvoid != null && obstacleAvoid.obstacleList.Count > 0)
+        finalMoveDirection = moveDirection;
+        if (obstacleAvoid != null && obstacleAvoid.obstacleList != null && obstacleAvoid.obstacleList.Count > 0)
         {
             avoidVec = obstacleAvoid.GetAvoidVelocity(finalMoveDirection, npcSpeed);
             //「本来の移動方向 moveDirection + 回避方向 avoidVec3D」
@@ -76,6 +77,15 @@ public class RunnerAI : MonoBehaviour
     private void InitializeAI()
     {
         targetPosition = new Vector3(startLanePosition.x, startLanePosition.y, transform.position.z - endLegth) ;
+    }
+    void OnDrawGizmos()
+    {
+        // 進行方向を描画（青色）
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, finalMoveDirection * 5f);
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(transform.position, targetPosition);
     }
 
 }

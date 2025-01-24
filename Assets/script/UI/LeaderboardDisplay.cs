@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using System.Linq;
 
 public class LeaderboardDisplay : MonoBehaviour
 {
@@ -28,13 +29,18 @@ public class LeaderboardDisplay : MonoBehaviour
         }
 
         // スコアデータをLeaderboardManagerから取得してUIを生成
-        List<ScoreEntry> scores = LeaderboardManager.Instance.GetScores();
+        List<ScoreEntry> scores = LeaderboardManager.Instance.GetScores()
+            .OrderByDescending(s => s.distance)
+            .Take(5)  // 上位5件のみ取得
+            .ToList();
+
+        // スコアを表示
         foreach (ScoreEntry scoreEntry in scores)
         {
-            Debug.Log(scoreEntry.playerName + ": " + scoreEntry.distance);
+            Debug.Log($"{scoreEntry.playerName}: {scoreEntry.distance}");
             GameObject entry = Instantiate(scoreEntryPrefab, scoreListParent);
             entry.transform.Find("PlayerNameText").GetComponent<TextMeshProUGUI>().text = scoreEntry.playerName;
-            entry.transform.Find("ScoreText").GetComponent<TextMeshProUGUI>().text = scoreEntry.distance.ToString() + "m";
+            entry.transform.Find("ScoreText").GetComponent<TextMeshProUGUI>().text = $"{scoreEntry.distance}m";
         }
     }
 

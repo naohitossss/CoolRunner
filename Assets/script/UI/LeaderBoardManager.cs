@@ -14,7 +14,7 @@ public class LeaderboardManager : MonoBehaviour
     public static FirebaseFirestore db { get; private set; }
 
     [SerializeField] private List<ScoreEntry> scoreEntries = new List<ScoreEntry>(); // スコアエントリーのリスト
-    private const int MaxEntries = 7;  // 表示する最大ランキング数
+    private const int MaxEntries = 5;  // 表示する最大ランキング数
 
     private int currentDistance = 0; // 現在の距離
 
@@ -110,7 +110,7 @@ public class LeaderboardManager : MonoBehaviour
     // FireStoreからスコアを読み込み
     private void LoadScores()
     {
-        db.Collection("users_ranking").OrderBy("Distance").Limit(MaxEntries).GetSnapshotAsync().ContinueWith(task =>
+        db.Collection("users_ranking").OrderByDescending("Distance").Limit(MaxEntries).GetSnapshotAsync().ContinueWith(task =>
             {
                 if (task.IsCompleted)
                 {
