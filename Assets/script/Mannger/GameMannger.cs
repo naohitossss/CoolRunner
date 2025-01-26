@@ -20,7 +20,8 @@ public class GameMannger : MonoBehaviour
     private Transform playerTransform; // プレイヤーの位置情報
     private LaneMovement playerMovement; // プレイヤーの移動制御コンポーネント
     private TerrainSlicing terrainSlicing;
-    private ItemSpawner itemSpawner;     
+    private ItemSpawner itemSpawner;
+    private RandomMapGena randomMapGena; // RandomMapGenaのインスタンス
 
     void Awake()
     {
@@ -32,6 +33,10 @@ public class GameMannger : MonoBehaviour
         itemSpawner = GetComponent<ItemSpawner>();
         if(itemSpawner != null){
            itemSpawner.SetPlayerTransform(playerTransform);
+        }
+        randomMapGena = GetComponent<RandomMapGena>();
+        if(randomMapGena != null){
+            randomMapGena.SetPlayer(playerTransform);
         }
     }
 
