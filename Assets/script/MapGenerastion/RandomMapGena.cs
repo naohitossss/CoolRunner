@@ -2,33 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// ランダムにマップを生成するコンポーネント
 public class RandomMapGena : MonoBehaviour
 {
-    public GameObject streatObj;
-    public GameObject building1;    // 建物タイプ1
-    public GameObject building2;    // 建物タイプ2
-    public GameObject building3;    // 建物タイプ3
+    public GameObject streatObj;    // 通りのプレハブ
+    public GameObject building1;    // 建物タイプ1のプレハブ
+    public GameObject building2;    // 建物タイプ2のプレハブ
+    public GameObject building3;    // 建物タイプ3のプレハブ
 
-    [SerializeField] private GameObject GrassObj;
-    [SerializeField] private GameObject buildingParents;
-    public float buildingWidth = 10f;  // 建物の幅
-    public int startMapRow {get;private set;} = 10;
-    public int streatCount = 3;
-    public int leftBuildingNum{get;private set;} = 4;
-    private Transform player;  // プレイヤーのTransformコンポーネント
+    [SerializeField] private GameObject GrassObj;          // 草のプレハブ
+    [SerializeField] private GameObject buildingParents;   // 建物の親オブジェクト
+    public float buildingWidth = 10f;                      // 建物の幅
+    public int startMapRow {get;private set;} = 10;        // 初期のマップ行数
+    public int streatCount = 3;                            // 通りの数
+    public int leftBuildingNum{get;private set;} = 4;      // 左側の建物の数
+    private Transform player;                              // プレイヤーのTransformコンポーネント
 
-    public float streatObjLegth {get;private set;}
-    private Vector3 setStreatPos;
-    private Vector3 setBuildingPos;
+    public float streatObjLegth {get;private set;}         // 通りの長さ
+    private Vector3 setStreatPos;                          // 通りの位置
+    private Vector3 setBuildingPos;                        // 建物の位置
 
-    private Quaternion LeftBuildingQuaternion = Quaternion.Euler(0f, 90f, 0f);
-    private Quaternion rightBuildingQuaternion = Quaternion.Euler(0f, -90f, 0f);
-    private float deletionDistance = 30f;  // プレイヤーからこの距離以上離れた地形を削除
-    private float SetNewRowdistance = 250f;
-    private RandomOBSGena randomOBSGena;
+    private Quaternion LeftBuildingQuaternion = Quaternion.Euler(0f, 90f, 0f);  // 左側の建物の回転
+    private Quaternion rightBuildingQuaternion = Quaternion.Euler(0f, -90f, 0f); // 右側の建物の回転
+    private float deletionDistance = 30f;                  // プレイヤーからこの距離以上離れた地形を削除
+    private float SetNewRowdistance = 250f;                // 新しい行を生成する距離
+    private RandomOBSGena randomOBSGena;                   // 障害物生成コンポーネント
     private List<GameObject> activeMapObj = new List<GameObject>();  // アクティブな地形を追跡
-    private int mapRowcount = 0;
+    private int mapRowcount = 0;                           // マップ行数のカウント
 
+    /// 初期化処理
     void Start()
     {
         randomOBSGena = GetComponent<RandomOBSGena>();
@@ -56,6 +58,7 @@ public class RandomMapGena : MonoBehaviour
         player = playerTransform;
     }
 
+    /// 古い地形を削除
     private void CleanupOldMapRow()
     {
         // プレイヤーから一定距離後ろにある地形を削除
@@ -70,6 +73,7 @@ public class RandomMapGena : MonoBehaviour
         }
     }
 
+    /// 新しい地形の行を生成
     private void GenerateNewTerrainRow()
     {
         mapRowcount++;
@@ -97,6 +101,7 @@ public class RandomMapGena : MonoBehaviour
         setStreatPos += new Vector3(0f, 0f, streatObjLegth * 1.5f);
     }
 
+    /// プレイヤーの位置に応じて新しい地形を生成
     private void checkTerrainRow()
     {
         if (player != null)
@@ -112,6 +117,7 @@ public class RandomMapGena : MonoBehaviour
         }
     }
 
+    /// 初期マップデータの生成
     void InitMapData()
     {
         for(int row = 0; row < startMapRow; row++)
@@ -136,6 +142,7 @@ public class RandomMapGena : MonoBehaviour
         } 
     }
 
+    /// ランダムな建物を生成
     private void SpawnRandomBuilding(Vector3 position, int buildingType, Quaternion quaternion, Transform buildingParents)
     {
         GameObject buildingPrefab = null;

@@ -195,7 +195,7 @@ public class LaneMovement : MonoBehaviour
     {
        Vector3 forwardMovement = transform.forward * moveSpeed * Time.deltaTime;
         Vector3 lateralMovement = new Vector3(lanes[currentLane].x - transform.position.x, 0, 0) * Time.deltaTime * laneChangeSpeed;
-        Vector3 movementVector = forwardMovement + lateralMovement;
+        Vector3 movementVector = (forwardMovement + lateralMovement) * 10;
         return movementVector.magnitude;
     }
 
