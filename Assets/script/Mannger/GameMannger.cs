@@ -22,6 +22,7 @@ public class GameMannger : MonoBehaviour
     private TerrainSlicing terrainSlicing;
     private ItemSpawner itemSpawner;
     private RandomMapGena randomMapGena; // RandomMapGenaのインスタンス
+    private RandomOBSGena randomOBSGena; // RandomOBSGenaのインスタンス
 
     void Awake()
     {
@@ -38,6 +39,7 @@ public class GameMannger : MonoBehaviour
         if(randomMapGena != null){
             randomMapGena.SetPlayer(playerTransform);
         }
+        randomOBSGena = GetComponent<RandomOBSGena>();
     }
 
     void Update()
@@ -126,9 +128,12 @@ public class GameMannger : MonoBehaviour
 
             playerMovement.SetStartPoint(spawnPoint);
 
-
+            // RandomOBSGenaにプレイヤーを設定
+            randomOBSGena = GetComponent<RandomOBSGena>();
+            if (randomOBSGena != null)
+            {
+                randomOBSGena.SetPlayer(player);
+            }
         }
-
-
     }
 }

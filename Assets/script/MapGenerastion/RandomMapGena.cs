@@ -14,13 +14,12 @@ public class RandomMapGena : MonoBehaviour
     public float buildingWidth = 10f;  // 建物の幅
     public int startMapRow {get;private set;} = 10;
     public int streatCount = 3;
-    public int LeftBuildingNum{get;private set;} = 4;
+    public int leftBuildingNum{get;private set;} = 4;
     private Transform player;  // プレイヤーのTransformコンポーネント
 
     public float streatObjLegth {get;private set;}
     private Vector3 setStreatPos;
     private Vector3 setBuildingPos;
-    private List<List<int>> mapList = new List<List<int>>();
 
     private Quaternion LeftBuildingQuaternion = Quaternion.Euler(0f, 90f, 0f);
     private Quaternion rightBuildingQuaternion = Quaternion.Euler(0f, -90f, 0f);
@@ -28,6 +27,7 @@ public class RandomMapGena : MonoBehaviour
     private float SetNewRowdistance = 250f;
     private RandomOBSGena randomOBSGena;
     private List<GameObject> activeMapObj = new List<GameObject>();  // アクティブな地形を追跡
+    private int mapRowcount = 0;
 
     void Start()
     {
@@ -72,6 +72,7 @@ public class RandomMapGena : MonoBehaviour
 
     private void GenerateNewTerrainRow()
     {
+        mapRowcount++;
         List<int> mapRow = new List<int>();
         GameObject newRow = new GameObject();
         newRow.transform.position = setStreatPos;
@@ -81,8 +82,8 @@ public class RandomMapGena : MonoBehaviour
         // 通りの生成
         Instantiate(streatObj, setStreatPos, Quaternion.identity, newRow.transform);
 
-        int buildingTypeRight = 3;
-        randomOBSGena.addMapRow(activeMapObj.Count - 1, buildingTypeRight, setStreatPos, newRow);
+        int buildingTypeRight = Random.Range(1, 4);
+        randomOBSGena.addMapRow(mapRowcount - 1, buildingTypeRight, setStreatPos, newRow);
         int buildingTypeLeft = Random.Range(1, 4);
 
         // 右側の建物
@@ -93,7 +94,7 @@ public class RandomMapGena : MonoBehaviour
         Vector3 leftPos = setStreatPos + new Vector3(-streatObjLegth, 0f, 0f);
         SpawnRandomBuilding(leftPos, buildingTypeLeft, LeftBuildingQuaternion, newRow.transform);
 
-        setStreatPos += new Vector3(0f, 0f, streatObjLegth);
+        setStreatPos += new Vector3(0f, 0f, streatObjLegth * 1.5f);
     }
 
     private void checkTerrainRow()
@@ -122,7 +123,6 @@ public class RandomMapGena : MonoBehaviour
             // 通りの生成
             Instantiate(streatObj, setStreatPos, Quaternion.identity, activeMapObj[row].transform);
             int buildingTypeRight = Random.Range(1, 4);
-            Debug.Log("Calling EnsureMapListSize for InitMapData");
             int buildingTypeLeft = Random.Range(1, 4);
 
             // 右側の建物
@@ -132,7 +132,7 @@ public class RandomMapGena : MonoBehaviour
             // 左側の建物
             Vector3 leftPos = setStreatPos + new Vector3(-streatObjLegth, 0f, 0f);
             SpawnRandomBuilding(leftPos, buildingTypeLeft, LeftBuildingQuaternion, activeMapObj[row].transform);
-            setStreatPos += new Vector3(0f, 0f, streatObjLegth);
+            setStreatPos += new Vector3(0f, 0f, streatObjLegth * 1.5f);
         } 
     }
 
@@ -150,7 +150,7 @@ public class RandomMapGena : MonoBehaviour
         if(buildingPrefab != null)
         {
             // グラスオブジェクトの生成
-            Instantiate(GrassObj, position, Quaternion.identity, buildingParents);
+            Instantiate(GrassObj, position + new Vector3(position.x, 0f, 0f), Quaternion.identity, buildingParents);
 
             if(position.x < 0)
             {

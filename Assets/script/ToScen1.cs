@@ -21,4 +21,8 @@ public class ToScen1 : MonoBehaviour
     {
         SceneManager.LoadScene("LeaderboardScene");
     }
+    public void LoadRamdomEndlessScene()
+    {
+        SceneManager.LoadScene("Endless_MapGena");
+    }
 }

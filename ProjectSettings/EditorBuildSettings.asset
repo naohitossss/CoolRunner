@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LeaderboardScene.unity
     guid: a122a130e38c7d841ba3f68a8798ead4
+  - enabled: 1
+    path: Assets/Scenes/Endless_MapGena.unity
+    guid: ecaf36c5db639ff4b8e41edd7d56f73a
   m_configObjects: {}
