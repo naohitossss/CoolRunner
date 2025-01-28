@@ -14,7 +14,7 @@ public class HeatStroke : MonoBehaviour
     public float currentStroke;
     [Header("熱中症ゲージの増加量")]
     [Range(0, 10)]
-    public float sunExposureRate = 2f;
+    public float sunExposureRate = 3f;
     [Header("影に入った時の熱中症ゲージの減少量")]
     [Range(0, 10)]
     public float shadeRecoveryRate = 2f;
