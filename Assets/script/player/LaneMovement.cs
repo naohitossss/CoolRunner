@@ -191,12 +191,16 @@ public class LaneMovement : MonoBehaviour
         }
     }
     
-    public float getPlayerMoveVectorLength()
+    public float GetPlayerMoveVectorLength()
     {
-       Vector3 forwardMovement = transform.forward * moveSpeed * Time.deltaTime;
-        Vector3 lateralMovement = new Vector3(lanes[currentLane].x - transform.position.x, 0, 0) * Time.deltaTime * laneChangeSpeed;
-        Vector3 movementVector = (forwardMovement + lateralMovement) * 10;
-        return movementVector.magnitude;
+        // 前方と横方向の移動量を常に計算
+        Vector3 forwardMovement = transform.forward * moveSpeed * Time.deltaTime;
+        Vector3 lateralMovement = new Vector3(laneChangeSpeed * Time.deltaTime, 0, 0);
+        
+        // 合計移動ベクトルを計算（横方向の移動を常に考慮）
+        Vector3 movementVector = forwardMovement + lateralMovement;
+        
+        return movementVector.magnitude * 20;
     }
 
     // レーン変更の処理
