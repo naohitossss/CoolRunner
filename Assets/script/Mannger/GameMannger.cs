@@ -23,6 +23,11 @@ public class GameMannger : MonoBehaviour
     private ItemSpawner itemSpawner;
     private RandomMapGena randomMapGena; // RandomMapGenaのインスタンス
     private RandomOBSGena randomOBSGena; // RandomOBSGenaのインスタンス
+    private float currentDistance; // プレイヤーの現在位置
+
+    private float increaseDistance = 1000f; // 速度を増加させる距離間隔
+
+    private float DistanceIncreasedForward = 0f; // 速度を増加させるための距離
 
     void Awake()
     {
@@ -47,18 +52,15 @@ public class GameMannger : MonoBehaviour
         // プレイヤーと初期位置の参照が有効な場合のみ処理を実行
         if (playerTransform != null && spawnPoint != null)
         {
+            currentDistance = playerTransform.position.z - spawnPoint.position.z; // プレイヤーの現在位置からスポーン地点までの距離を計算
             // スポーン地点からプレイヤーまでの直線距離を計算
             distanceFromSpawn = Vector3.Distance(spawnPoint.position, playerTransform.position);
             // イベントを発火（デバッグログを追加）
             EventHandler.CallUpdateDistanceEvent(distanceFromSpawn);
-            
-
-            // 一定時間ごとに速度を増加させる処理
-            speedIncreaseTimer += Time.deltaTime;
-            if (speedIncreaseTimer >= speedIncreaseInterval)
+            if ( currentDistance - DistanceIncreasedForward >= increaseDistance)
             {
                 IncreasePlayerSpeed();
-                speedIncreaseTimer = 0f; // タイマーを初期化
+                DistanceIncreasedForward = currentDistance;
             }
         }
     }
@@ -66,11 +68,13 @@ public class GameMannger : MonoBehaviour
     // プレイヤーの移動速度を増加させる処理
     private void IncreasePlayerSpeed()
     {
+        
         if (playerMovement != null)
         {
             playerMovement.IncreaseSpeed(speedIncreaseAmount);
-            Debug.Log($"Speed increased by {speedIncreaseAmount}. New speed: {playerMovement.moveSpeed}");
+            Debug.Log("Speed Increased!");
         }
+        
     }
 
     private void SetTerrain(){
