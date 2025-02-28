@@ -10,7 +10,7 @@ public class LaneMovement : MonoBehaviour
     private Vector3[] lanes = new Vector3[3]; // 0: 左, 1: 中央, 2: 右
     private int currentLane = 1;              // 現在のレーン位置（初期は中央）
 
-    public float moveSpeed = 15f;             // 前進速度
+    [SerializeField]public float moveSpeed{get; private set;} = 15f;             // 前進速度
     public float laneChangeSpeed = 12f;        // 横移動（レーン変更）の速度
     public float rotationSpeed = 12f;         // 回転速度
     public float slideSpeed = 20f;            // スライディング時の速度

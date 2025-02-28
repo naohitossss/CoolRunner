@@ -117,9 +117,5 @@ public class AIObstacleAvoid : MonoBehaviour
         // 基本の検出範囲（Box）
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(transform.position, new Vector3(dDboxWidth, 0.1f, dDboxLength));
-
-
-
-        
     }
 }
