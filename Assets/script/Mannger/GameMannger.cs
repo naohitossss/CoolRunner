@@ -8,6 +8,7 @@ public class GameMannger : MonoBehaviour
     [SerializeField] private Transform spawnPoint;     // プレイヤーの初期スポーン位置
     [SerializeField] private UnityEngine.UI.Slider heatStrokeBar; // 熱中症ゲージのUIスライダー
     [SerializeField] private GameObject inventoryPanel; // インベントリパネルのUI
+    [SerializeField] private CameraPos_Boss cameraPos_Boss;
     [SerializeField] private CameraPos cameraPos; // プレイヤーを追従するカメラの制御コンポーネント
     public string targetLightName = "Directional Light"; // 影の計算に使用する太陽光源の名前
 
@@ -29,9 +30,15 @@ public class GameMannger : MonoBehaviour
 
     private float DistanceIncreasedForward = 0f; // 速度を増加させるための距離
 
+    [Header("Boss Settings")]
+    [SerializeField] private GameObject bossPrefab;        // ボスのプレハブ
+    [SerializeField] private float bossSpawnHeight = 5f;   // ボスの出現高さ
+    [SerializeField] private float bossForwardOffset = 50f; // プレイヤーの前方オフセット
+
     void Awake()
     {
         SpawnPlayer(); // ゲーム開始時にプレイヤーを生成
+        SpawnBoss(); // ゲーム開始時にボスを生成
         terrainSlicing = GetComponent<TerrainSlicing>();
         if(terrainSlicing != null){
             SetTerrain();
@@ -81,6 +88,19 @@ public class GameMannger : MonoBehaviour
         terrainSlicing.player = playerTransform;
     }
 
+    private void SpawnBoss()
+    {
+        if (bossPrefab == null || playerTransform == null) return;
+        bossPrefab.GetComponent<Boss_Attack>().SetPlayer(playerTransform);
+        // プレイヤーの前方位置を計算
+        Vector3 spawnPosition = playerTransform.position + 
+                              (playerTransform.forward * bossForwardOffset) + 
+                              (Vector3.up * bossSpawnHeight);
+
+        // ボスを生成
+        GameObject boss = Instantiate(bossPrefab, spawnPosition, Quaternion.identity);
+    }
+
     // プレイヤーを生成し、必要なコンポーネントを初期化する処理
     private void SpawnPlayer()
     {
@@ -89,12 +109,6 @@ public class GameMannger : MonoBehaviour
             // プレイヤーをスポーン位置に生成
             GameObject player = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
             playerTransform = player.transform; // プレイヤーの位置情報を保存
-
-            // レーン移動の制御コンポーネントを取得し初期化
-            LaneMovement laneMovement = player.GetComponent<LaneMovement>();
-
-            laneMovement.SetStartPoint(spawnPoint);
-
 
             // 熱中症システムの制御コンポーネントを取得し初期化
             HeatStroke heatStroke = player.GetComponent<HeatStroke>();
@@ -123,8 +137,8 @@ public class GameMannger : MonoBehaviour
 
 
             // カメラの追従対象をプレイヤーに設定
-
-            cameraPos.target = player.transform;
+            if(cameraPos != null)cameraPos.target = player.transform;
+            if(cameraPos_Boss != null)cameraPos_Boss.target = player.transform;
 
 
             // プレイヤーの移動制御コンポーネントを保存し初期化
