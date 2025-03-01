@@ -20,4 +20,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Endless_MapGena.unity
     guid: ecaf36c5db639ff4b8e41edd7d56f73a
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: 0d28c3e623880914b8c0639004034810, type: 2}
+    com.unity.localization.settings: {fileID: 11400000, guid: c4517f2118c792248b34024793980dd5, type: 2}
