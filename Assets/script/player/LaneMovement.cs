@@ -10,7 +10,7 @@ public class LaneMovement : MonoBehaviour
     private Vector3[] lanes = new Vector3[3]; // 0: 左, 1: 中央, 2: 右
     private int currentLane = 1;              // 現在のレーン位置（初期は中央）
 
-    [SerializeField]public float moveSpeed{get; private set;} = 15f;             // 前進速度
+    [SerializeField]public float moveSpeed{get; set;} = 15f;             // 前進速度
     public float laneChangeSpeed = 12f;        // 横移動（レーン変更）の速度
     public float rotationSpeed = 12f;         // 回転速度
     public float slideSpeed = 20f;            // スライディング時の速度
@@ -77,6 +77,7 @@ public class LaneMovement : MonoBehaviour
     void Update()
     {
         energyTimer -= Time.deltaTime;
+        slideSpeed = moveSpeed + 5f;
         if (energyTimer < 0){
             isEnergy = false;
         }
@@ -130,29 +131,30 @@ public class LaneMovement : MonoBehaviour
                 knockbackTimer -= Time.deltaTime;
                 bool afterJump = false;
 
+                // 一時停止中のレーン変更処理
+                if (Input.GetKeyDown(KeyCode.A) && currentLane > 0)
+                {
+                    currentLane--;
+                    targetLanePosition = new Vector3(lanes[currentLane].x, transform.position.y, transform.position.z);
+                }
+                else if (Input.GetKeyDown(KeyCode.D) && currentLane < lanes.Length - 1)
+                {
+                    currentLane++;
+                    targetLanePosition = new Vector3(lanes[currentLane].x, transform.position.y, transform.position.z);
+                }
+                else if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+                {
+                    afterJump = true;
+                }
+
                 if (knockbackTimer > 2.2f)
                 {
                     // ノックバック移動の実行
                     controller.Move((knockbackDirection) * knockbackForce * Time.deltaTime);
                 }
-                else if (knockbackTimer > 0f)
+                else if (knockbackTimer > 0)
                 {
-                    // 一時停止中のレーン変更処理
                     controller.Move(Vector3.zero);
-                    if (Input.GetKeyDown(KeyCode.A) && currentLane > 0)
-                    {
-                        currentLane--;
-                        targetLanePosition = new Vector3(lanes[currentLane].x, transform.position.y, transform.position.z);
-                    }
-                    else if (Input.GetKeyDown(KeyCode.D) && currentLane < lanes.Length - 1)
-                    {
-                        currentLane++;
-                        targetLanePosition = new Vector3(lanes[currentLane].x, transform.position.y, transform.position.z);
-                    }
-                    else if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-                    {
-                        afterJump = true;
-                    }
                 }
                 else
                 {

@@ -13,7 +13,6 @@ public class RandomOBSGena : MonoBehaviour
     [SerializeField] private LayerMask obslapLayer; // 障害物の重なり判定用レイヤー
     [SerializeField] private GameObject playerObj;  // プレイヤーの参照
     [SerializeField] private float checkRadius = 1.0f;  // 判定用の球の半径
-    [SerializeField] private bool showDebugGizmos = true;
 
     private List<List<int>> mapList = new List<List<int>>(); // マップ状態管理 (0:空き, 1:使用済み)
     private RandomMapGena randomMapGena;           // マップ生成の参照
@@ -35,9 +34,6 @@ public class RandomOBSGena : MonoBehaviour
         obsLength1 = GetObjectLength(OBSObj1);
         obsLength2 = GetObjectLength(OBSObj2);
         obsLength3 = GetObjectLength(OBSObj3);
-        Debug.Log($"OBSObj1 Length: {obsLength1}");
-        Debug.Log($"OBSObj2 Length: {obsLength2}");
-        Debug.Log($"OBSObj3 Length: {obsLength3}");
     }
 
     // オブジェクトの縦長を取得するメソッド

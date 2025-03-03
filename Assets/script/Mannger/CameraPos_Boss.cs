@@ -15,7 +15,7 @@ public class CameraPos_Boss : MonoBehaviour
 
     [Header("カメラとプレイヤーの距離")]
     [Range(5, 20)]
-    public float distanceFromTarget = 7.5f;
+    public float distanceFromTarget = 10f;
 
     [Header("カメラの移動速度")]
     [Range(1, 50)]
