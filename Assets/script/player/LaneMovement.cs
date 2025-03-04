@@ -1,6 +1,7 @@
 ﻿using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.XR;
+using System.Collections;
 
 public class LaneMovement : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class LaneMovement : MonoBehaviour
     private Animator anim;                    // アニメーターコンポーネント
     private Vector3 moveDirection;            // 移動方向ベクトル
     private Vector3 targetLanePosition;       // 目標レーン位置
+    private float defaultSpeed;               // デフォルトの速度
 
     public AudioSource jumpSound;             // ジャンプ効果音
     public AudioSource landSound;             // 着地効果音
@@ -45,11 +47,16 @@ public class LaneMovement : MonoBehaviour
     private CharacterState state = CharacterState.Normal;  // 現在のキャラクター状態
     private ShadowCollider shadowCollider;     // 影判定用コンポーネント
     private bool isEnergy = false;
+    [SerializeField] private CameraPos cameraPos;
 
     public void SetStartPoint(Transform point)
     {
         startPoint = point;
         InitializeLanes();
+    }
+    public void SetCamera(CameraPos camera)
+    {
+        cameraPos = camera;
     }
 
     private void InitializeLanes()
@@ -72,6 +79,7 @@ public class LaneMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
         shadowCollider = GetComponent<ShadowCollider>();
+        defaultSpeed = moveSpeed;
     }
 
     void Update()
@@ -282,12 +290,23 @@ public class LaneMovement : MonoBehaviour
         anim.SetTrigger("Slide");  // スライディングアニメーション開始
     }
 
+    private IEnumerator DelayCameraSpeed()
+    {
+        float followSpeed = Mathf.Lerp(moveSpeed, moveSpeed * 0.5f, (moveSpeed / defaultSpeed) * 0.9f); // 高速移動時に遅延を加える
+        cameraPos.SetFollowSpeed(followSpeed); // カメラの追従速度を変更
+        yield return new WaitForSeconds(2f); // 1秒待つ
+        cameraPos.SetFollowSpeed(moveSpeed);
+
+        // 元の速度に戻す
+    }
+
     // 速度を増加させるメソッド
     public void IncreaseSpeed(float amount)
     {
         moveSpeed *= amount;
         // スライディング速度も比例して増加
         slideSpeed = moveSpeed + 5f;
+        StartCoroutine(DelayCameraSpeed());
     }
 }
 

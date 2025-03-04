@@ -65,6 +65,11 @@ public class GameMannger : MonoBehaviour
         }
     }
 
+    public UnityEngine.UI.Slider GetHeatStrokeBar()
+    {
+        return heatStrokeBar;
+    }
+
     // プレイヤーの移動速度を増加させる処理
     private void IncreasePlayerSpeed()
     {
@@ -119,6 +124,9 @@ public class GameMannger : MonoBehaviour
             // カメラの追従対象をプレイヤーに設定
             if(cameraPos != null)cameraPos.target = player.transform;
             if(cameraPos_Boss != null)cameraPos_Boss.target = player.transform;
+
+            if(cameraPos != null)player.GetComponent<LaneMovement>().SetCamera(cameraPos);
+
 
 
             // プレイヤーの移動制御コンポーネントを保存し初期化

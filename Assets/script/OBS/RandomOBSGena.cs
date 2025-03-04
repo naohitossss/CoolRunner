@@ -13,6 +13,7 @@ public class RandomOBSGena : MonoBehaviour
     [SerializeField] private LayerMask obslapLayer; // 障害物の重なり判定用レイヤー
     [SerializeField] private GameObject playerObj;  // プレイヤーの参照
     [SerializeField] private float checkRadius = 1.0f;  // 判定用の球の半径
+    [SerializeField] private int GenaOBSprobability = 80;  // 判定用の球の半径
 
     private List<List<int>> mapList = new List<List<int>>(); // マップ状態管理 (0:空き, 1:使用済み)
     private RandomMapGena randomMapGena;           // マップ生成の参照
@@ -36,58 +37,63 @@ public class RandomOBSGena : MonoBehaviour
         obsLength3 = GetObjectLength(OBSObj3);
     }
 
-    // オブジェクトの縦長を取得するメソッド
-    private float GetObjectLength(GameObject obj)
-{
-    if (obj == null) return 0f;
-
-    // プレハブの場合、一時的にインスタンスを生成して計算
-    GameObject tempInstance = Instantiate(obj);
-    tempInstance.SetActive(false); // 見えないように非アクティブ化
-
-    Bounds bounds = new Bounds();
-    bool hasBounds = false;
-
-    // 全ての子オブジェクトのRendererを取得
-    Renderer[] renderers = tempInstance.GetComponentsInChildren<Renderer>(true);
-    if (renderers.Length > 0)
+    public void SetGnenaOBSprobability(int probability)
     {
-        // 最初のRendererのBoundsで初期化
-        bounds = renderers[0].bounds;
-        // 他のすべてのRendererのBoundsを統合
-        for (int i = 1; i < renderers.Length; i++)
-        {
-            bounds.Encapsulate(renderers[i].bounds);
-        }
-        hasBounds = true;
+        GenaOBSprobability = probability;
     }
 
-    // Colliderがある場合も同様に計算
-    if (!hasBounds)
+    // オブジェクトの縦長を取得するメソッド
+    private float GetObjectLength(GameObject obj)
     {
-        Collider[] colliders = tempInstance.GetComponentsInChildren<Collider>(true);
-        if (colliders.Length > 0)
+        if (obj == null) return 0f;
+
+        // プレハブの場合、一時的にインスタンスを生成して計算
+        GameObject tempInstance = Instantiate(obj);
+        tempInstance.SetActive(false); // 見えないように非アクティブ化
+
+        Bounds bounds = new Bounds();
+        bool hasBounds = false;
+
+        // 全ての子オブジェクトのRendererを取得
+        Renderer[] renderers = tempInstance.GetComponentsInChildren<Renderer>(true);
+        if (renderers.Length > 0)
         {
-            bounds = colliders[0].bounds;
-            for (int i = 1; i < colliders.Length; i++)
+            // 最初のRendererのBoundsで初期化
+            bounds = renderers[0].bounds;
+            // 他のすべてのRendererのBoundsを統合
+            for (int i = 1; i < renderers.Length; i++)
             {
-                bounds.Encapsulate(colliders[i].bounds);
+                bounds.Encapsulate(renderers[i].bounds);
             }
             hasBounds = true;
         }
+
+        // Colliderがある場合も同様に計算
+        if (!hasBounds)
+        {
+            Collider[] colliders = tempInstance.GetComponentsInChildren<Collider>(true);
+            if (colliders.Length > 0)
+            {
+                bounds = colliders[0].bounds;
+                for (int i = 1; i < colliders.Length; i++)
+                {
+                    bounds.Encapsulate(colliders[i].bounds);
+                }
+                hasBounds = true;
+            }
+        }
+
+        // 一時オブジェクトを破棄
+        DestroyImmediate(tempInstance);
+
+        if (!hasBounds)
+        {
+            Debug.LogWarning($"Could not determine size for obstacle {obj.name}. Using default size.");
+            return 1f; // デフォルト値
+        }
+
+        return bounds.size.z;
     }
-
-    // 一時オブジェクトを破棄
-    DestroyImmediate(tempInstance);
-
-    if (!hasBounds)
-    {
-        Debug.LogWarning($"Could not determine size for obstacle {obj.name}. Using default size.");
-        return 1f; // デフォルト値
-    }
-
-    return bounds.size.z;
-}
 
     public void SetPlayer(GameObject player)
     {
@@ -135,7 +141,7 @@ public class RandomOBSGena : MonoBehaviour
         {
             if (mapList[mapRowNum][i] == 0)
             {
-                int OBSNum = Random.Range(1, 100) <= 80 ? Random.Range(1, 4) : 0;
+                int OBSNum = Random.Range(1, 100) <= GenaOBSprobability ? Random.Range(1, 4) : 0;
                 Vector3 pos = streatPos + new Vector3((2 - i) * (randomMapGena.streatObjLegth / 2), 0f, 0f);
                 switch (OBSNum)
                 {
