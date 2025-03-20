@@ -292,12 +292,13 @@ public class LaneMovement : MonoBehaviour
 
     private IEnumerator DelayCameraSpeed()
     {
-        float followSpeed = Mathf.Lerp(moveSpeed, moveSpeed * 0.5f, (moveSpeed / defaultSpeed) * 0.9f); // 高速移動時に遅延を加える
-        cameraPos.SetFollowSpeed(followSpeed); // カメラの追従速度を変更
-        yield return new WaitForSeconds(2f); // 1秒待つ
-        cameraPos.SetFollowSpeed(moveSpeed);
-
-        // 元の速度に戻す
+        float originalSpeed = cameraPos.speed;
+        float reducedSpeed = originalSpeed * 0.5f; // カメラの追従速度を半分に減少
+        cameraPos.SetFollowSpeed(reducedSpeed); // カメラの追従速度を変更
+        Debug.Log("Camera speed reduced");
+        yield return new WaitForSeconds(1f); // 3秒待つ
+        cameraPos.SetFollowSpeed(originalSpeed); // 元の速度に戻す
+        Debug.Log("Camera speed restored");
     }
 
     // 速度を増加させるメソッド

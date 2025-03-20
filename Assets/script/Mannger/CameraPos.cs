@@ -53,6 +53,7 @@ public class CameraPos : MonoBehaviour
     public void SetFollowSpeed(float speed)
     {
         this.speed = speed;
+        currentSpeed = speed; // currentSpeedも更新
     }
 
     // カメラの位置更新
@@ -61,18 +62,18 @@ public class CameraPos : MonoBehaviour
         if (target != null)
         {
             Quaternion targetRotation = Quaternion.Euler(fixedRotation);
-            
+
             // カメラの目標位置を計算
             Vector3 targetPosition = target.position + targetRotation * new Vector3(xOffset, yOffset, -distanceFromTarget) + target.GetComponent<CharacterController>().center * 1.75f;
 
             // カメラの位置と回転を滑らかに更新
-            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * currentSpeed);
+            transform.position = Vector3.Lerp(transform.position, targetPosition, Time.deltaTime * speed); // currentSpeedからspeedに変更
             transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 25f);
         }
 
         // カメラの視野角を計算
         float targetFOV = baseFOV + (currentSpeed * speedMultiplier);
-        
+
         // カメラの視野角を滑らかに更新
         GetComponent<Camera>().fieldOfView = Mathf.Lerp(GetComponent<Camera>().fieldOfView, Mathf.Clamp(targetFOV, baseFOV, maxFOV), Time.deltaTime * 5f);
     }
